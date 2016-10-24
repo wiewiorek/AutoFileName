@@ -241,7 +241,20 @@ class FileNameComplete(sublime_plugin.EventListener):
             return
         else:
             this_dir = os.path.split(view.file_name())[0]
-        this_dir = os.path.join(this_dir, cur_path)
+
+            # Get list of all opened folders
+            wwr_open_folders = sublime.active_window().folders()
+
+            # Get the open file name
+            wwr_open_file = view.file_name()
+
+            # Get a lists with common pefixes with open file
+            wwr_common = [os.path.commonprefix([folder, wwr_open_file]) for folder in wwr_open_folders]
+
+            # set this_dir to longest common path
+            this_dir = max( wwr_common )
+
+            this_dir = os.path.join(this_dir, cur_path)
 
         try:
             if sublime.platform() == "windows" and len(view.extract_scope(sel)) < 4 and os.path.isabs(cur_path):
